@@ -1,5 +1,5 @@
 # sgnoo lab
-
+lab.sgnoo.com
 ## structure
 
 ### permit
