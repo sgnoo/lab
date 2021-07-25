@@ -4,11 +4,15 @@ const fs = require('fs');
 const path = require('path');
 
 const { ethers } = require('hardhat');
+const BigNumber = ethers.BigNumber
 
 const contracts = [
   // permit
   'ERC20WithPermit',
-  'Pool'
+  'Pool',
+
+  'ERC165',
+  'EncoderTest',
 ]
 
 async function main() {
@@ -28,6 +32,25 @@ async function main() {
     const pool = await Pool.deploy(erc20WithPermit.address)
     address.Pool = pool.address;
     console.log('permit/Pool:', pool.address)
+  }
+
+  // ERC165
+  if (!process.env.ERC165) {
+    const ERC165 = await ethers.getContractFactory('ERC165')
+    const erc165 = await ERC165.deploy()
+    console.log(`ERC165=${erc165.address}`)
+  }
+
+  if (!process.env.EncoderTest) {
+    const sourceToken = '0x312c064982dd146681E14a780EF8A74655047fc4'
+    const rate = BigNumber.from('100')
+    const startTime = BigNumber.from('200')
+    const stepEndTimes = [BigNumber.from('10'), BigNumber.from('20')]
+    const stepRatio = [BigNumber.from('30'), BigNumber.from('40')]
+
+    const EncoderTest = await ethers.getContractFactory('EncoderTest')
+    const encoderTest = await EncoderTest.deploy(sourceToken, rate, startTime, stepEndTimes, stepRatio)
+    console.log(`EncoderTest=${encoderTest.address}`)
   }
 
   contracts.forEach(contract => {
